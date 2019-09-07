@@ -13,7 +13,12 @@ var app = express();
 
 var server = app.listen(config.socketPort);
 global.io = require('socket.io')(server);
-global.baseUrl = config.baseUrl
+
+var bodyParser = require('body-parser')
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+}));
 
 //allow cross origin
 app.use(require('cors')());

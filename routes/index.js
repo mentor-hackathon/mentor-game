@@ -2,47 +2,95 @@
 
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 var path = require('path');
+var config = require(path.join(__dirname, '../config.json'));
+var axios = require('axios');
+
 // var generateQrAdapter = require(path.join(__dirname, '../', 'adapters/generate_qr_adapter.js'));
 var qrHookAdapter = require(path.join(__dirname, '../', 'adapters/qr_hook_adapter.js'));
-
+var accountProfileAdapter = require(path.join(__dirname, '../', 'adapters/account_profile_adapter.js'));
 /* GET init page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Mentor Game'});
 });
 
 router.get('/hook', function (req, res, next) {
-    // fake hook response
-    console.log(1);
-    console.log(req.headers); // receive when scan -> hook
-    console.log(req.param("type"));
-
     // load content
+    console.log(req.headers)
+    var userID = req.headers['user_id'];
+
     if (req.param("type") == "init") {
         // trigger send data to mobile to show dialog content
-        generateSchemaDialog(req.headers, function (body) {
-            // 200 for (qr hook call trigger hook)
-            console.log('111');
-            return res.json({
-                'status': 200,
-                'data': body.data
+        async.parallel({
+            generateSchema: function (cb) {
+                generateSchemaDialog(req.headers, function (body) {
+                    // 200 for (qr hook call trigger hook)
+                    cb(null, body)
+                });
+            },
+            getAccountInfo: function (cb) {
+                accountProfileAdapter.GetAccountInfo(userID, cb)
+            }
+        }, function (error, result) {
+            if (error != null) {
+                return res.json({
+                    'status': 500,
+                    'message': error.toString()
+                });
+            }
+
+            // handler user info 
+
+            if (result.generateSchema.data != null) {
+                return res.json({
+                    'status': 200,
+                    'data': result.generateSchema.data
+                });
+            }
+
+            res.json({
+                'status': 503
             });
         });
-    }else {
+    } else {
         return res.json({
-            'status':400
+            'status': 400
         })
     }
 
 });
 
-router.post('/hook',function (req,res,next) {
-    if (req.param("type") == "submit") {
-        // submit action
-        console.log("submit");
-        res.render('/boards',{title:'board',numberBoard:9})
-    }
+router.post('/hook', function (req, res, next) {
+    // submit
+    console.log(req.headers)
+    console.log(req.body);
+    // send socket to change page
+
+    // switch play-game for web
+
+
+
+    res.json({
+        'status': 200,
+        'data': closeDialog()
+    })
 });
+
+var loadGame = function (headers, body, callback) {
+    axios.get(config.baseUrl + 'boards', {
+        params: {
+            limit: 15
+        },
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function (value) {
+        callback(null, value)
+    }).catch(function (reason) {
+        callback(reason, null)
+    })
+};
 
 var generateSchemaDialog = function (header, callback) {
     // validate header data
@@ -56,7 +104,6 @@ var generateSchemaDialog = function (header, callback) {
     //     timestamp: 111111111111,
     //     session: "session"
     // };
-    console.log(global.baseUrl)
     var body = {
         data: {
             metadata: {
@@ -64,18 +111,18 @@ var generateSchemaDialog = function (header, callback) {
                 app_id: 1,
                 title: "Quiz Game",
                 submit_button: {
-                    label: "Join",
+                    label: "Join Game",
                     background_color: "#6666ff",
-                    cta: 1,
-                    url: global.baseUrl + "/hook?type=submit"
+                    cta: "request",
+                    url: config.baseUrl + "hook"
                 },
                 elements: [{
                     label: "Bet",
                     type: "input",
-                    input_type:"text",
+                    input_type: "text",
                     required: true,
-                    name: "Bet 1",
-                    placeholder:"111"
+                    name: "Bet",
+                    placeholder: "111"
                 }]
             }
         }
@@ -83,6 +130,26 @@ var generateSchemaDialog = function (header, callback) {
 
     callback(body)
 
+};
+
+var closeDialog = function () {
+    var body = {
+        data: {
+            metadata: {
+                app_name: "The Mentor Game",
+                app_id: 1,
+                title: "Quiz Game",
+                submit_button: {
+                    label: "Close",
+                    background_color: "#6666ff",
+                    cta: "close",
+                    url:""
+                }
+            }
+        }
+    };
+
+    return body;
 };
 
 module.exports = router;

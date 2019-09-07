@@ -1,38 +1,57 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
+var async = require('async');
+var path = require('path')
+var stravpiAdapter = require(path.join(__dirname, '../', 'adapters/stravpi_adapter.js'));
+var generateHookAdapter = require(path.join(__dirname, '../', 'adapters/generate_qr_adapter.js'));
+var config = require(path.join(__dirname, '../config.json'));
 
 router.get('/', function (req, res, next) {
-    // request
-    // numberBoard: number
-    // load data question from file store
+    var numberBoard = req.query.limit
 
-    // mock data question
-    var questions = [{
-        'id': 1,
-    }, {
-        'id': 2,
-    },{
-        'id': 3,
-    },{
-        'id': 4,
-    },{
-        'id': 5,
-    },{
-        'id': 6,
-    },{
-        'id': 7,
-    },{
-        'id': 8,
-    }];
-
-    // async generate qr code
-
-    var numberBoard = req.param("numberBoard")
-
-    res.render('board', {
-        title: 'Mentor Game', numberBoard: numberBoard, questions: questions
+    async.waterfall([
+        getListQuestion,
+        generateQrcode
+    ], function (err, result) {
+        if (err != null) {
+            return res.json({
+                'status': 500,
+                'message': err.toString(),
+            })
+        }
+        res.render('board', {
+            title: 'Mentor Game', numberBoard: result.length, questions: result
+        });
     });
+
+    function getListQuestion(callback) {
+        stravpiAdapter.GetQuestions(numberBoard, function (error, questions) {
+            if (error != null) {
+                callback(error, null)
+            } else {
+                callback(null, questions.data)
+            }
+        })
+    }
+
+    function generateQrcode(questions, callback) {
+        async.mapSeries(questions,function (question, cb) {
+            var callback_url = "https://qr.id.vin/hook?url=" + config.baseUrl + "question/" + questions.id + "&method=GET"
+            generateHookAdapter.GenerateCustomerQr(callback_url, function (error, qr) {
+                cb(null,qr)
+            });
+        },function (err, results) {
+            callback(null,results)
+        });
+    }
 });
+
+var LoadBoard = function () {
+    
+}
+
 
 var startCountdown = function (seconds, callback) {
     var counter = seconds;

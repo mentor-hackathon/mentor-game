@@ -5,10 +5,10 @@ exports.SendSchema = function (header, data, callback) {
 
     axios.get('https://qr.id.vin/hook?url=' + baseUrl + '/?type=submit' + '&method=GET', {
         headers: header,
-        params:data
-    }).then(function(response){
-        callback(response)
+        params: data
+    }).then(function (response) {
+        callback(null, response)
     }).catch(function (error) {
-        callback(error)
+        callback(error, null)
     })
 };
