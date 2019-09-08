@@ -10,7 +10,7 @@
     <div class="header-game">
         <p id="playerA">Player: A | Score: 0 </p>
         <p id="playerB">Player: B | Score: 0</p>
-        <p id="time">Date Time: 20 minutes</p>
+        <p id="time"><span id="time">05:00</span> </p>
     </div>
     <div class="board">
         <% for(var i = 0; i < numberBoard; i++) { %>
@@ -30,7 +30,7 @@
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         // window.location = '/boards' // end game
-                        alert(this.response)
+                        alert(this.response.data)
                     }
                 };
                 xhttp.open("POST", "sessions/"+msg.session_id+"/end", true);
@@ -38,6 +38,31 @@
             }
             loadContent()
         })
+
+
+        function startTimer(duration, display) {
+            var timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = "Count Down " +minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                    // send socket event to end game
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            var fiveMinutes = 60 * 20,
+                display = document.querySelector('#time');
+            startTimer(fiveMinutes, display);
+        };
     </script>
 
 </div>
