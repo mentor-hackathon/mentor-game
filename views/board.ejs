@@ -20,26 +20,30 @@
         <% } %>
     </div>
 
-<!--    <div class="endgame" style="display: none;visibility: hidden">-->
-<!--        <p>Congurations <span id="winner"></span>  </p>-->
-<!--        <p>Score <span id="score">0</span></p>-->
-<!--    </div>-->
+    <div class="endgame" style="display: none;visibility: hidden">
+        <p>Congurations <span id="winner"></span>  </p>
+        <p>Score <span id="score">0</span></p>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js">
     </script>
     <script>
         var socket = io()
         socket.on('answer', function (msg) {
+            sessionStorage.setItem("session_hackathon", msg.session_id);
+
             function loadContent() {
                 var xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         // window.location = '/boards' // end game
-                        alert(this.response.data)
-                        // var playerA = document.querySelector('#playerA');
-                        // playerA.textContent = this.response.data.total_correct
-                        // var totalPlayA = document.querySelector('#totalA');
-                        // totalPlayA.textContent = this.response.dark.total
+                        // alert(this.response.data)
+                        // console.log(this.response)
+                        var playerA = document.querySelector('#playerA');
+                        playerA.textContent = this.response.data[msg.user_id].total_correct
+                        var totalPlayA = document.querySelector('#totalA');
+                        totalPlayA.textContent = this.response.data[msg.user_id].total
+
                     }
                 };
                 xhttp.open("GET", "sessions/"+msg.session_id+"/calculate", true);
@@ -63,12 +67,39 @@
                 if (--timer < 0) {
                     timer = duration;
                     // send socket event to end game
+                    endGame()
                 }
             }, 1000);
         }
 
+        function endGame() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4
+                //    && this.status == 200
+                ) {
+                    var divOne = document.getElementsByClassName("header-game");
+                    divOne.style.display='hidden';
+                    var divTwo = document.getElementsByClassName("board");
+                    divOne.style.display='hidden';
+
+                    var playerA = document.querySelector('#winner');
+                    playerA.textContent = this.response.data[0].user_id
+                    var totalPlayA = document.querySelector('#score');
+                    totalPlayA.textContent = this.response.data[0].total_correct
+
+                    var endGame = document.getElementsByClassName("endgame");
+                    endGame.style.display = 'none'
+
+                }
+            };
+            xhttp.open("POST", "sessions/"+sessionStorage.getItem('session_hackathon')+"/end", true);
+            xhttp.send();
+            // alert(sessionStorage.getItem('session_hackathon'))
+        }
+
         window.onload = function () {
-            var fiveMinutes = 60 * 5,
+            var fiveMinutes = 60 * 2,
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);
         };
