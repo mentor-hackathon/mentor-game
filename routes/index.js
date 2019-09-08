@@ -10,6 +10,8 @@ var axios = require('axios');
 // var generateQrAdapter = require(path.join(__dirname, '../', 'adapters/generate_qr_adapter.js'));
 var qrHookAdapter = require(path.join(__dirname, '../', 'adapters/qr_hook_adapter.js'));
 var accountProfileAdapter = require(path.join(__dirname, '../', 'adapters/account_profile_adapter.js'));
+var transferMoneyAdapter = require(path.join(__dirname, '../', 'adapters/transfer_money_adapter.js'));
+
 /* GET init page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Mentor Game'});
@@ -17,7 +19,6 @@ router.get('/', function (req, res, next) {
 
 router.get('/hook', function (req, res, next) {
     // load content
-    console.log(req.headers)
     var userID = req.headers['user_id'];
 
     if (req.param("type") == "init") {
@@ -66,31 +67,42 @@ router.post('/hook', function (req, res, next) {
     console.log(req.headers)
     console.log(req.body);
     // send socket to change page
-
-    // switch play-game for web
-
-
+    var user_id = req.headers['user_id'];
+    //
+    // async.series({
+    //     getToken:function(callback){
+    //         callback()
+    //     },
+    //     TransferMoney:function (callback) {
+    //         // transfer money for quan tro
+    //         callback()
+    //     },
+    //     PlayGame:function (callback) {
+    //         // join into a room // if have 2 persons .. switch to play game board screen
+    //         // switch play-game for web
+    //         req.io.on('connection', function(socket){
+    //             // join room
+    //             req.io.emit('playgame',{user_id:user_id})
+    //         });
+    //
+    //         callback()
+    //     }
+    // },function (error, result) {
+    //     res.json({
+    //         'status': 200,
+    //         'data': closeDialog()
+    //     })
+    // });
+    //
+    req.io.sockets.emit('playgame',{user_id:user_id})
 
     res.json({
         'status': 200,
         'data': closeDialog()
-    })
-});
+    });
 
-var loadGame = function (headers, body, callback) {
-    axios.get(config.baseUrl + 'boards', {
-        params: {
-            limit: 15
-        },
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(function (value) {
-        callback(null, value)
-    }).catch(function (reason) {
-        callback(reason, null)
-    })
-};
+
+});
 
 var generateSchemaDialog = function (header, callback) {
     // validate header data

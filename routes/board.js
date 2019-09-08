@@ -3,13 +3,13 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var path = require('path')
+var path = require('path');
 var stravpiAdapter = require(path.join(__dirname, '../', 'adapters/stravpi_adapter.js'));
 var generateHookAdapter = require(path.join(__dirname, '../', 'adapters/generate_qr_adapter.js'));
 var config = require(path.join(__dirname, '../config.json'));
 
 router.get('/', function (req, res, next) {
-    var numberBoard = req.query.limit
+    var numberBoard = req.query.limit | 15
 
     async.waterfall([
         getListQuestion,
