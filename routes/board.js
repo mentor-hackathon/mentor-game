@@ -9,7 +9,7 @@ var generateHookAdapter = require(path.join(__dirname, '../', 'adapters/generate
 var config = require(path.join(__dirname, '../config.json'));
 
 router.get('/', function (req, res, next) {
-    var numberBoard = req.query.limit | 4
+    var numberBoard = req.query.limit | 6
 
     async.waterfall([
         getListQuestion,
