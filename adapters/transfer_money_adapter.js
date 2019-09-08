@@ -5,7 +5,13 @@ var path = require('path');
 var config = require(path.join(__dirname, '../', '/config.json'));
 
 exports.Transfer = function (data, callback) {
-    axios.post(config.transferUrl + '/transfer', data).then(function (value) {
+    axios.post(config.transferUrl + '/transfer', data, {
+        headers: {
+            'Authorization': 'Basic bWVudG9yOjEyMzQ1Ng==',
+            'X-Device-ID': 'a7ce87d6599440a1',
+            'Content-Type': 'application/json'
+        }
+    }).then(function (value) {
         callback(null, value)
     }).catch(function (reason) {
         callback(reason, null)
