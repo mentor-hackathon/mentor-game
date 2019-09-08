@@ -97,8 +97,8 @@ if (config.appMode == 'local') {
     socket.on('disconnect', function(){});
 }
 
-server.listen(4000,function () {
-    console.log('listening port 4000')
+server.listen(3000,function () {
+    console.log('listening port 3000')
 });
 
 module.exports = app;

@@ -20,7 +20,7 @@ router.get('/:id', function (req, res, next) {
 
         res.json({
             'status': 200,
-            'data':generateQuestionDetail(questionDetail)
+            'data':generateQuestionDetail(questionDetail.data)
         })
     });
 });
@@ -34,12 +34,13 @@ var generateQuestionDetail = function (data) {
 
     var options = [];
 
-    for (var i = 0; i < data.length; i++) {
+    var i =0;
+    for (i = 0; i < data['answers'].length; i++) {
         var o = {
-            label: 'Answer ' + (i + 1),
-            value: data[i].answer,
+            label: data.answers[i].answer,
+            value: data.answers[i].is_correct
         };
-        options.push(o)
+        options[i] = o
     }
 
     var body = {
@@ -56,7 +57,7 @@ var generateQuestionDetail = function (data) {
             elements: [{
                 label: data.question,
                 type: "radio",
-                input_type: "dialog",
+                display_type: "inline",
                 required: true,
                 name: data.question,
                 placeholder: "111",

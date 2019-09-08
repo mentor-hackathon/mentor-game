@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-var request = require('request');
 var router = express.Router();
 var async = require('async');
 var path = require('path');

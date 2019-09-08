@@ -18,7 +18,17 @@
   <script>
     var socket = io()
     socket.on('playgame', function (msg) {
-      window.location = '/boards'
+      function loadContent() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            window.location = '/boards'
+          }
+        };
+        xhttp.open("GET", "boards", true);
+        xhttp.send();
+      }
+      loadContent()
     })
   </script>
   </body>

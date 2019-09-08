@@ -25,3 +25,15 @@ exports.GetQuestion = function (id, callback) {
         callback(reason, null)
     })
 };
+
+exports.GetAnswerOfQuestion = function (answerIds, callback) {
+    axios.get(config.database_url + '/answers',{
+        params:{
+            "_in":answerIds
+        }
+    }).then(function (value) {
+        callback(null, value)
+    }).catch(function (reason) {
+        callback(reason, null)
+    })
+};

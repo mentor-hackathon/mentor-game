@@ -9,7 +9,7 @@ var generateHookAdapter = require(path.join(__dirname, '../', 'adapters/generate
 var config = require(path.join(__dirname, '../config.json'));
 
 router.get('/', function (req, res, next) {
-    var numberBoard = req.query.limit | 15
+    var numberBoard = req.query.limit | 4
 
     async.waterfall([
         getListQuestion,
@@ -38,8 +38,9 @@ router.get('/', function (req, res, next) {
 
     function generateQrcode(questions, callback) {
         async.mapSeries(questions,function (question, cb) {
-            var callback_url = "https://qr.id.vin/hook?url=" + config.baseUrl + "question/" + questions.id + "&method=GET"
+            var callback_url = "https://qr.id.vin/hook?url=" + config.baseUrl + "question/" + question.id + "&method=GET"
             generateHookAdapter.GenerateCustomerQr(callback_url, function (error, qr) {
+
                 cb(null,qr)
             });
         },function (err, results) {

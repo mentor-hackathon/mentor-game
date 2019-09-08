@@ -8,8 +8,8 @@
 <div class="board-game">
     <h1 style="font-size: 28px"><%= title %></h1>
     <div class="header-game">
-        <p id="playerA">Player: A | Score: <%= numberBoard %> </p>
-        <p id="playerB">Player: B | Score: 9</p>
+        <p id="playerA">Player: A | Score: 0 </p>
+        <p id="playerB">Player: B | Score: 0</p>
         <p id="time">Date Time: 20 minutes</p>
     </div>
     <div class="board">
@@ -19,6 +19,9 @@
             </div>
         <% } %>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js">
+    </script>
 </div>
 </body>
 </html>
