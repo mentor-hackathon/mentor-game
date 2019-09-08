@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var request = require('request');
 var router = express.Router();
 var async = require('async');
 var path = require('path');
@@ -102,6 +103,41 @@ router.post('/hook', function (req, res, next) {
     });
 
 
+});
+
+router.post('/questions/:question_id/answer/:answer_id', function (req, res, next) {
+    // submit
+    // send socket to change page
+    var user_id = req.headers['user_id'];
+    var session_id = req.query['session_id'];
+    var question_id = req.params['question_id'];
+    var answer_id = req.params['answer_id'];
+    var resp = res;
+    console.log('user ' + user_id + ' answer ' + answer_id + ' question ' + question_id + ' session ' + session_id);
+    var options = {
+        uri : 'https://mentor-game-core-api.herokuapp.com/activities',
+        method : 'POST',
+        json: {
+            "user_id": user_id,
+            "answer": answer_id,
+            "game": session_id
+        }
+    };
+    request(options, function (error, response, body) {
+        var res = '';
+        if (!error && response.statusCode == 200) {
+            res = body;
+        }
+        else {
+            res = 'Not Found';
+        }
+        console.log(res);
+        resp.json({
+            'status': 200,
+            'data': closeDialog()
+        });
+        req.io.sockets.emit('answer',{user_id:user_id, session_id: session_id, question_id: question_id, answer_id: answer_id });
+    });
 });
 
 var generateSchemaDialog = function (header, callback) {
