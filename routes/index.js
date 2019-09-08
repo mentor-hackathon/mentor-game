@@ -145,6 +145,56 @@ router.post('/questions/:question_id/answer/:answer_id', function (req, res, nex
     });
 });
 
+router.get('/sessions/:session_id/calculate', function (req, res, next) {
+    // submit
+    // send socket to change page
+    var session_id = req.params['session_id'];
+    var resp = res;
+    console.log('session ' + session_id);
+    var options = {
+        uri : 'https://mentor-game-core-api.herokuapp.com/activities?game=' + session_id,
+        method : 'GET'
+    };
+    request(options, function (error, response, body) {
+        console.log(response);
+        var answers = JSON.parse(response.body);
+        var scores = {};
+        var totalAnswers = {};
+        var users = [];
+        for (var i = 0; i < answers.length; i++) {
+            var answer = answers[i];
+            var userScore = scores[answer.user_id];
+            if (users.indexOf(answer.user_id) <= -1) {
+                users.push(answer.user_id);
+            }
+            var score = typeof userScore === 'undefined' ? 0 : scores[answer.user_id];
+            var userTotal = totalAnswers[answer.user_id];
+            var total = typeof userTotal === 'undefined' ? 0 : totalAnswers[answer.user_id];
+            if (answer.answer.is_correct) {
+                score = score + 1;
+            }
+            total = total + 1;
+            scores[answer.user_id] = score;
+            totalAnswers[answer.user_id] = total;
+            console.log(answer);
+        }
+        var data = [];
+        for (var j = 0; j < users.length; j++) {
+            var user_id = users[j];
+            data.push({
+                'user_id': user_id,
+                'is_correct': scores[user_id],
+                'total': totalAnswers[user_id]
+            });
+        }
+        resp.json({
+            'status': 200,
+            'data': data
+        });
+    });
+
+});
+
 var generateSchemaDialog = function (header, callback) {
 
     var body = {
