@@ -2,7 +2,7 @@
   "appMode": "prod",
   "portApp": 9000,
   "socketPort": 9000,
-  "baseUrl": "https://mentor-game.herokuapp.com/",
+  "baseUrl": "https://mentor-game.herokuapp.com",
   "account_key": "YWNjb3VudC1wcm9maWxlLXNlcnZpY2U6aj13Vnc9I05XWjd3WTdrVg==",
   "database_url": "https://mentor-game-core-api.herokuapp.com",
   "transferUrl": "https://salty-mountain-45357.herokuapp.com",
