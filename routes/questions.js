@@ -7,6 +7,7 @@ var path = require('path');
 var config = require(path.join(__dirname, '../config.json'));
 var axios = require('axios');
 var stravpiAdapter = require(path.join(__dirname, '../', 'adapters/stravpi_adapter.js'));
+var sessionId = '1adsf3434SDFqwewfwdf'; // fake
 
 router.get('/:id', function (req, res, next) {
     var id = req.params.id;
@@ -26,11 +27,12 @@ router.get('/:id', function (req, res, next) {
 });
 
 
+
 var generateQuestionDetail = function (data) {
     if (data == null){
         return
     }
-    var hookUrl = config.baseUrl + 'question/' + data.id + '/answer?sessionId=1';
+    var hookUrl = config.baseUrl + 'question/' + data.id + '/answer?sessionId=1adsf3434SDFqwewfwdf';
 
     var options = [];
 
@@ -38,7 +40,7 @@ var generateQuestionDetail = function (data) {
     for (i = 0; i < data['answers'].length; i++) {
         var o = {
             label: data.answers[i].answer,
-            value: data.answers[i].is_correct
+            value: data.answers[i].id
         };
         options[i] = o
     }

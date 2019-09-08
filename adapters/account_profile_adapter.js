@@ -14,8 +14,8 @@ exports.GetAccountInfo = function (user_id, callback) {
     //     headers: {
     //         'Authorization': 'Basic ' + config.account_key,
     //         'Content-Type': 'application/json',
-    //         'X-User-ID': '345',
-    //         'X-User-ID-Type': user_id,
+    //         'X-User-ID': user_id,
+    //         'X-User-ID-Type': 'USER_ID',
     //         'cache-control': 'no-cache',
     //         'Accept': '*/*'
     //     }
@@ -23,8 +23,9 @@ exports.GetAccountInfo = function (user_id, callback) {
     //     console.log(response)
     //     callback(null, response)
     // }).catch(function (error) {
+    //     console.log(error)
     //     callback(error, null)
-    // })
+    // });
 
     var data = {
         'data': {

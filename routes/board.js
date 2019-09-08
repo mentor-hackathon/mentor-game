@@ -13,6 +13,7 @@ router.get('/', function (req, res, next) {
 
     async.waterfall([
         getListQuestion,
+        // createSession,
         generateQrcode
     ], function (err, result) {
         if (err != null) {
@@ -34,6 +35,10 @@ router.get('/', function (req, res, next) {
                 callback(null, questions.data)
             }
         })
+    }
+    
+    function createSession() {
+
     }
 
     function generateQrcode(questions, callback) {
