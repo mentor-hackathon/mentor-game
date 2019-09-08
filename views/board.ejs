@@ -8,8 +8,8 @@
 <div class="board-game">
     <h1 style="font-size: 28px"><%= title %></h1>
     <div class="header-game">
-        <p>Player: A | Score: <span id="playerA">0</span> | <span id="totalA">0</span></p>
-        <p>Player: B | Score: <span id="playerB">0</span> | <span id="totalB">0</span></p>
+        <p>Player: A ></p>
+        <p>Player: B</p>
         <p id="time"><span id="time">05:00</span> </p>
     </div>
     <div class="board">
@@ -38,7 +38,7 @@
                     if (this.readyState == 4 && this.status == 200) {
                         // window.location = '/boards' // end game
                         // alert(this.response.data)
-                        // console.log(this.response)
+                        console.log(this.response)
                         var playerA = document.querySelector('#playerA');
                         playerA.textContent = this.response.data[msg.user_id].total_correct
                         var totalPlayA = document.querySelector('#totalA');
@@ -78,19 +78,20 @@
                 if (this.readyState == 4
                 //    && this.status == 200
                 ) {
-                    var divOne = document.getElementsByClassName("header-game");
-                    divOne.style.display='hidden';
-                    var divTwo = document.getElementsByClassName("board");
-                    divOne.style.display='hidden';
+                    // var divOne = document.getElementsByClassName("header-game");
+                    // divOne.style.display='hidden';
+                    // var divTwo = document.getElementsByClassName("board");
+                    // divOne.style.display='hidden';
+                    //
+                    // var playerA = document.querySelector('#winner');
+                    // playerA.textContent = this.response.data[0].user_id
+                    // var totalPlayA = document.querySelector('#score');
+                    // totalPlayA.textContent = this.response.data[0].total_correct
+                    //
+                    // var endGame = document.getElementsByClassName("endgame");
+                    // endGame.style.display = 'none'
 
-                    var playerA = document.querySelector('#winner');
-                    playerA.textContent = this.response.data[0].user_id
-                    var totalPlayA = document.querySelector('#score');
-                    totalPlayA.textContent = this.response.data[0].total_correct
-
-                    var endGame = document.getElementsByClassName("endgame");
-                    endGame.style.display = 'none'
-
+                    alert(this.response)
                 }
             };
             xhttp.open("POST", "sessions/"+sessionStorage.getItem('session_hackathon')+"/end", true);
