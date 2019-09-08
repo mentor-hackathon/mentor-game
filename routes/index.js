@@ -6,6 +6,7 @@ var async = require('async');
 var path = require('path');
 var config = require(path.join(__dirname, '../config.json'));
 var axios = require('axios');
+var request = require('request');
 
 // var generateQrAdapter = require(path.join(__dirname, '../', 'adapters/generate_qr_adapter.js'));
 var qrHookAdapter = require(path.join(__dirname, '../', 'adapters/qr_hook_adapter.js'));
@@ -109,13 +110,16 @@ router.post('/hook', function (req, res, next) {
 
 });
 
-router.post('/questions/:question_id/answer/:answer_id', function (req, res, next) {
+router.post('/questions/:question_id/', function (req, res, next) {
     // submit
     // send socket to change page
+
+    console.log('ssss ',req.body)
+
     var user_id = req.headers['user_id'];
     var session_id = req.query['session_id'];
     var question_id = req.params['question_id'];
-    var answer_id = req.params['answer_id'];
+    var answer_id = req.body['answer_id'];
     var resp = res;
     console.log('user ' + user_id + ' answer ' + answer_id + ' question ' + question_id + ' session ' + session_id);
     var options = {
@@ -243,6 +247,10 @@ router.post('/sessions/:session_id/end', function (req, res, next) {
         });
     });
 
+});
+
+router.post('/end-game',function (req,res,next) {
+    console.log(req.body)
 });
 
 var transferPrize = function (amount, data) {

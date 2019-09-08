@@ -28,9 +28,9 @@ exports.GetQuestion = function (id, callback) {
 };
 
 exports.GetAnswerOfQuestion = function (answerIds, callback) {
-    axios.get(config.database_url + '/answers',{
-        params:{
-            "_in":answerIds
+    axios.get(config.database_url + '/answers', {
+        params: {
+            "_in": answerIds
         }
     }).then(function (value) {
         callback(null, value)
@@ -39,9 +39,13 @@ exports.GetAnswerOfQuestion = function (answerIds, callback) {
     })
 };
 
-exports.CreateSession = function (title, callback) {
-  axios.post(config.database_url + '/sessions',{
-        title : "The Quiz Game" + count++,
-
-  })
+exports.CreateSession = function (data, callback) {
+    axios.post(config.database_url + '/sessions', {
+        title: "The Quiz Game" + count++,
+        questions: data.questions
+    }).then(function (value) {
+        callback(null, value)
+    }).catch(function (error) {
+        callback(reason, null)
+    })
 };

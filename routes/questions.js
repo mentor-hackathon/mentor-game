@@ -7,10 +7,12 @@ var path = require('path');
 var config = require(path.join(__dirname, '../config.json'));
 var axios = require('axios');
 var stravpiAdapter = require(path.join(__dirname, '../', 'adapters/stravpi_adapter.js'));
-var sessionId = '1adsf3434SDFqwewfwdf'; // fake
+
 
 router.get('/:id', function (req, res, next) {
     var id = req.params.id;
+    var sessionId = req.query.sessionId;
+
     stravpiAdapter.GetQuestion(id, function (error, questionDetail) {
         if (error != null) {
             return res.json({
@@ -21,22 +23,22 @@ router.get('/:id', function (req, res, next) {
 
         res.json({
             'status': 200,
-            'data':generateQuestionDetail(questionDetail.data)
+            'data': generateQuestionDetail(questionDetail.data, sessionId)
         })
     });
 });
 
 
-
-var generateQuestionDetail = function (data) {
-    if (data == null){
+var generateQuestionDetail = function (data, sessionId) {
+    if (data == null) {
         return
     }
-    var hookUrl = config.baseUrl + 'question/' + data.id + '/answer?sessionId=1adsf3434SDFqwewfwdf';
+
+    var hookUrl = config.baseUrl + 'answer?questionId='+ data.id + '&sessionId='+sessionId;
 
     var options = [];
 
-    var i =0;
+    var i = 0;
     for (i = 0; i < data['answers'].length; i++) {
         var o = {
             label: data.answers[i].answer,
@@ -61,7 +63,7 @@ var generateQuestionDetail = function (data) {
                 type: "radio",
                 display_type: "inline",
                 required: true,
-                name: data.question,
+                name: 'answer',
                 placeholder: "111",
                 options: options,
             }]

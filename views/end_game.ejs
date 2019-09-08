@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<div class="init-game">
+    <h1><%= title %></h1>
+    <p>Congrations  </p>
+    <img src='/images/init.png' alt='Play Game' height='500' width='500'></img
+    <br>
+    <!--    <h2 style="color: darkblue">Quất em đi</h2>-->
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js">
+</script>
+<script>
+    var socket = io()
+    socket.on('playgame', function (msg) {
+        function loadContent() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    window.location = '/boards'
+                }
+            };
+            xhttp.open("GET", "boards", true);
+            xhttp.send();
+        }
+        loadContent()
+    })
+</script>
+</body>
+</html>
