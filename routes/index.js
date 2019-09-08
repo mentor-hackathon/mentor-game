@@ -71,12 +71,10 @@ router.post('/hook', function (req, res, next) {
     console.log(req.body);
     // send socket to change page
     var user_id = req.headers['user_id'];
-    var bet = req.body.bet
+    console.log('bet ',req.body['Bet'])
+    var bet = parseInt(req.body['Bet'],10);
 
-    if (bet > 100000) {
-        bet = 1000
-    }
-
+    console.log(bet)
     async.series({
         TransferMoney: function (callback) {
             var rq = {

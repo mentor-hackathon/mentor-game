@@ -35,10 +35,11 @@
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         // window.location = '/boards' // end game
-                        var playerA = document.querySelector('#playerA');
-                        playerA.textContent = this.response.data.total_correct
-                        var totalPlayA = document.querySelector('#totalA');
-                        totalPlayA.textContent = this.response.dark.total
+                        alert(this.response.data)
+                        // var playerA = document.querySelector('#playerA');
+                        // playerA.textContent = this.response.data.total_correct
+                        // var totalPlayA = document.querySelector('#totalA');
+                        // totalPlayA.textContent = this.response.dark.total
                     }
                 };
                 xhttp.open("GET", "sessions/"+msg.session_id+"/calculate", true);
@@ -67,7 +68,7 @@
         }
 
         window.onload = function () {
-            var fiveMinutes = 60 * 3,
+            var fiveMinutes = 60 * 5,
                 display = document.querySelector('#time');
             startTimer(fiveMinutes, display);
         };
