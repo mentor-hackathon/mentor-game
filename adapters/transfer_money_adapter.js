@@ -26,7 +26,7 @@ exports.GetWallet = function (token, callback) {
     axios.get(config.vinid_uat + '/wallet/v1/wallets', {
         headers: {
             'Authorization': 'Bearer ' + token,
-            'X-Device-ID': '123456',
+            'X-Device-ID': 'a7ce87d6599440a1',
             'Content-Type': 'application/json'
         }
     }).then(function (value) {

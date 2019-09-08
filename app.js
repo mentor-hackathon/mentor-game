@@ -9,6 +9,7 @@ var debug = require('debug')('app:server');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var boardsRouter = require('./routes/board');
+var questionRouter = require('./routes/questions');
 
 var app = express();
 
@@ -32,7 +33,7 @@ io.on('connection', function (socket) {
     });
 });
 
-app.set("io", io);
+app.set('io', io);
 
 app.use(function(req, res, next) {
     req.io = io;
@@ -61,6 +62,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/boards', boardsRouter);
+app.use('/question',questionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -13,7 +13,15 @@ exports.GetQuestions = function (limit, callback) {
         .then(function (value) {
             callback(null, value)
         }).catch(function (error) {
-            console.log(error)
-             callback(error, null)
+        console.log(error)
+        callback(error, null)
+    })
+};
+
+exports.GetQuestion = function (id, callback) {
+    axios.get(config.database_url + '/questions/' + id).then(function (value) {
+        callback(null, value)
+    }).catch(function (reason) {
+        callback(reason, null)
     })
 };

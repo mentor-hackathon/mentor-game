@@ -11,6 +11,7 @@ var axios = require('axios');
 var qrHookAdapter = require(path.join(__dirname, '../', 'adapters/qr_hook_adapter.js'));
 var accountProfileAdapter = require(path.join(__dirname, '../', 'adapters/account_profile_adapter.js'));
 var transferMoneyAdapter = require(path.join(__dirname, '../', 'adapters/transfer_money_adapter.js'));
+//
 
 /* GET init page. */
 router.get('/', function (req, res, next) {
@@ -62,60 +63,54 @@ router.get('/hook', function (req, res, next) {
 
 });
 
+
 router.post('/hook', function (req, res, next) {
     // submit
     console.log(req.headers)
     console.log(req.body);
     // send socket to change page
     var user_id = req.headers['user_id'];
-    //
-    // async.series({
-    //     getToken:function(callback){
-    //         callback()
-    //     },
-    //     TransferMoney:function (callback) {
-    //         // transfer money for quan tro
-    //         callback()
-    //     },
-    //     PlayGame:function (callback) {
-    //         // join into a room // if have 2 persons .. switch to play game board screen
-    //         // switch play-game for web
-    //         req.io.on('connection', function(socket){
-    //             // join room
-    //             req.io.emit('playgame',{user_id:user_id})
-    //         });
-    //
-    //         callback()
-    //     }
-    // },function (error, result) {
-    //     res.json({
-    //         'status': 200,
-    //         'data': closeDialog()
-    //     })
-    // });
-    //
-    req.io.sockets.emit('playgame',{user_id:user_id})
+    var bet = req.body.bet
 
-    res.json({
-        'status': 200,
-        'data': closeDialog()
+    if (bet > 100000) {
+        bet = 1000
+    }
+
+    async.series({
+        TransferMoney: function (callback) {
+            var rq = {
+                "from_uid": user_id,
+                "to_uid": "177780182",// quan tro
+                "pin": "000000",
+                "amount": bet,
+                "message": "Hello, Transfer"
+            }
+
+            transferMoneyAdapter.Transfer(rq, callback)
+        },
+        PlayGame: function (callback) {
+            // join into a room // if have 2 persons .. switch to play game board screen
+            // switch play-game for web
+            // req.io.on('connection', function(socket){
+            //     // join room
+            //     req.io.emit('playgame',{user_id:user_id})
+            // });
+
+            callback()
+        }
+    }, function (error, result) {
+        req.io.sockets.emit('playgame', {user_id: user_id})
+
+        res.json({
+            'status': 200,
+            'data': closeDialog()
+        })
     });
-
 
 });
 
 var generateSchemaDialog = function (header, callback) {
-    // validate header data
 
-    // var header_fake = {
-    //     "Content-Type": "Application/json",
-    //     user_id: 45,
-    //     device_id: "11",
-    //     scanner_version: "1",
-    //     os_version: "1",
-    //     timestamp: 111111111111,
-    //     session: "session"
-    // };
     var body = {
         data: {
             metadata: {
@@ -146,17 +141,15 @@ var generateSchemaDialog = function (header, callback) {
 
 var closeDialog = function () {
     var body = {
-        data: {
-            metadata: {
-                app_name: "The Mentor Game",
-                app_id: 1,
-                title: "Quiz Game",
-                submit_button: {
-                    label: "Close",
-                    background_color: "#6666ff",
-                    cta: "close",
-                    url:""
-                }
+        metadata: {
+            app_name: "The Mentor Game",
+            app_id: 1,
+            title: "Quiz Game",
+            submit_button: {
+                label: "Close",
+                background_color: "#6666ff",
+                cta: "close",
+                url: ""
             }
         }
     };
